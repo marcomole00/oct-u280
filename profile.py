@@ -1,4 +1,5 @@
 """OCT Alveo U280 profile with post-boot script
+If a node with a 100G NIC is selected that interface is added to the topology
 """
 
 # Import the Portal object.
