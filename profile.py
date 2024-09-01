@@ -115,6 +115,11 @@ for nodeName in nodeList:
     host_iface1 = host.addInterface()
     host_iface1.component_id = "eth2"
     host_iface1.addAddress(pg.IPv4Address("192.168.40." + str(i+30), "255.255.255.0")) 
+    # these are the nodes with an additional 100G interface
+    if nodeName in ['pc160', 'pc161', 'pc162', 'pc163']:
+        host_iface2 = host.addInterface()
+        host_iface2.component_id = "eth3"
+        host_iface2.addAddress(pg.IPv4Address("192.168.40." + str(i+40), "255.255.255.0"))
     fpga_iface1 = fpga.addInterface()
     fpga_iface1.component_id = "eth0"
     fpga_iface1.addAddress(pg.IPv4Address("192.168.40." + str(i+10), "255.255.255.0"))
@@ -125,6 +130,8 @@ for nodeName in nodeList:
     lan.addInterface(fpga_iface1)
     lan.addInterface(fpga_iface2)
     lan.addInterface(host_iface1)
+    if nodeName in ['pc160', 'pc161', 'pc162', 'pc163']:
+        lan.addInterface(host_iface2)
   
     i+=1
 
