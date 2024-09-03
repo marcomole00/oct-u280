@@ -49,6 +49,12 @@ pc.defineParameter("osImage", "Select Image",
                    imageList[0], imageList,
                    longDescription="Supported operating systems are Ubuntu and CentOS.")  
 
+# Optionally start X11 VNC server.
+pc.defineParameter("startVNC",  "Start X11 VNC on your nodes",
+                   portal.ParameterType.BOOLEAN, False,
+                   longDescription="Start X11 VNC server on your nodes. There will be " +
+                   "a menu option in the node context menu to start a browser based VNC " +
+                   "client. Works really well, give it a try!")
 # Optional ephemeral blockstore
 pc.defineParameter("tempFileSystemSize", "Temporary Filesystem Size",
                    portal.ParameterType.INTEGER, 0,advanced=True,
@@ -69,6 +75,7 @@ pc.defineParameter("tempFileSystemMount", "Temporary Filesystem Mount Point",
                    longDescription="Mount the temporary file system at this mount point; in general you " +
                    "you do not need to change this, but we provide the option just in case your software " +
                    "is finicky.")  
+
                    
 # Retrieve the values the user specifies during instantiation.
 params = pc.bindParameters()        
@@ -134,7 +141,8 @@ for nodeName in nodeList:
     if nodeName in ['pc160', 'pc161', 'pc162', 'pc163']:
         lan.addInterface(host_iface2)
 
-    host.startVNC()
+    if params.startVNC:
+        host.startVNC()
     i+=1
 
 # Print Request RSpec
