@@ -133,7 +133,8 @@ for nodeName in nodeList:
     lan.addInterface(host_iface1)
     if nodeName in ['pc160', 'pc161', 'pc162', 'pc163']:
         lan.addInterface(host_iface2)
-  
+
+    host.startVNC()
     i+=1
 
 # Print Request RSpec
