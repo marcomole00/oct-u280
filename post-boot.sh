@@ -14,8 +14,12 @@ fix_dependecy_for_config_fpga() {
 
 
 bpf_dependencies() {
-
     apt-get install -y libbpf-dev libbpf clang llvm libc6-dev-i386
+}
+
+clone_repos() {
+    git clone https://github.com/marcomole00/open-nic-driver.git
+    git clone https://github.com/alexbradd/ebpf-xdp-test-suite.git
 }
 
 install_xrt() {
@@ -238,4 +242,5 @@ if [[ "$OSVERSION" == "ubuntu-22.04" ]]; then
     fix_dependecy_for_config_fpga
     cp /proj/octfpga-PG0/tools/xbflash/ubuntu-20.04/xrt_202210.2.13.466_20.04-amd64-xbflash2.deb ~
     bpf_dependencies
+    clone_repos
 fi
