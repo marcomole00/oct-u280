@@ -13,6 +13,11 @@ fix_dependecy_for_config_fpga() {
 }
 
 
+bpf_dependencies() {
+
+    apt-get install -y libbpf-dev libbpf clang llvm libc6-dev-i386
+}
+
 install_xrt() {
     echo "Install XRT"
     if [[ "$OSVERSION" == "ubuntu-20.04" ]] || [[ "$OSVERSION" == "ubuntu-22.04" ]]; then
@@ -232,4 +237,5 @@ if [[ "$OSVERSION" == "ubuntu-22.04" ]]; then
     install_distrobox
     fix_dependecy_for_config_fpga
     cp /proj/octfpga-PG0/tools/xbflash/ubuntu-20.04/xrt_202210.2.13.466_20.04-amd64-xbflash2.deb ~
+    bpf_dependencies
 fi
