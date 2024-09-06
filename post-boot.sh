@@ -238,9 +238,9 @@ disable_pcie_fatal_error
 
 
 if [[ "$OSVERSION" == "ubuntu-22.04" ]]; then
-    install_distrobox
+   # install_distrobox
     fix_dependecy_for_config_fpga
-    cp /proj/octfpga-PG0/tools/xbflash/ubuntu-20.04/xrt_202210.2.13.466_20.04-amd64-xbflash2.deb ~
+    # cp /proj/octfpga-PG0/tools/xbflash/ubuntu-20.04/xrt_202210.2.13.466_20.04-amd64-xbflash2.deb ~
     bpf_dependencies
     clone_repos
 fi
