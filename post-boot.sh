@@ -14,12 +14,12 @@ fix_dependecy_for_config_fpga() {
 
 
 bpf_dependencies() {
-    apt-get install -y libbpf-dev libbpf clang llvm libc6-dev-i386
+    apt-get install -y libbpf-dev clang llvm libc6-dev-i386
 }
 
 clone_repos() {
-    git clone https://github.com/marcomole00/open-nic-driver.git
-    git clone https://github.com/alexbradd/ebpf-xdp-test-suite.git
+    git clone https://github.com/marcomole00/open-nic-driver.git /users/markmole/open-nic-driver
+    git clone --recurse-submodules https://github.com/marcomole00/ebpf-xdp-test-suite  /users/markmole/ebpf-xdp-test-suite
 }
 
 install_xrt() {
