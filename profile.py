@@ -56,10 +56,6 @@ pc.defineParameter("startVNC",  "Start X11 VNC on your nodes",
                    "a menu option in the node context menu to start a browser based VNC " +
                    "client. Works really well, give it a try!")
 
-pc.defineParameter("DPDK", "DPDK 100G NIC",
-                     portal.ParameterType.BOOLEAN, False,
-                     longDescription="Select this option if you want dpdk on 100G NICs.")
-
 # Optional ephemeral blockstore
 pc.defineParameter("tempFileSystemSize", "Temporary Filesystem Size",
                    portal.ParameterType.INTEGER, 0,advanced=True,
@@ -100,9 +96,8 @@ for nodeName in nodeList:
     # Assign to the node hosting the FPGA.
     host.component_id = nodeName
     
-    if nodeName in ['pc160', 'pc161', 'pc162', 'pc163']  and params.DPDK:
-        host.disk_image = "urn:publicid:IDN+cloudlab.umass.edu+image+octfpga-PG0:dpdk-mellanox"
-        
+    if params.osImage == imageList[1] and i == 0:
+        host.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU20-64-STD'
     else:
         host.disk_image = params.osImage
     
