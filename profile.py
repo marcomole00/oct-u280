@@ -97,7 +97,7 @@ for nodeName in nodeList:
     host.component_id = nodeName
     
     if params.osImage == 'urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU22-64-STD' and i == 0:
-        host.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU20-64-STD'
+        host.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
     else:
         host.disk_image = params.osImage
     
