@@ -1,12 +1,4 @@
 #!/usr/bin/env bash
-install_distrobox() {
-    echo "Adding distrobox ppa"
-    add-apt-repository -y ppa:michel-slm/distrobox
-    echo "Installing distrobox"
-    apt-get install -y distrobox
-}
-
-
 fix_dependecy_for_config_fpga() {
     wget http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.23_amd64.deb
     apt-get install -y ./libssl1.1_1.1.1f-1ubuntu2.23_amd64.deb
@@ -244,3 +236,5 @@ if [[ "$OSVERSION" == "ubuntu-22.04" ]]; then
     bpf_dependencies
     clone_repos
 fi
+
+sudo apt install -y tmux
