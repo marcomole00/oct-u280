@@ -96,7 +96,7 @@ for nodeName in nodeList:
     # Assign to the node hosting the FPGA.
     host.component_id = nodeName
     
-    if params.osImage == imageList[1] and i == 0:
+    if params.osImage == 'urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU22-64-STD' and i == 0:
         host.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU20-64-STD'
     else:
         host.disk_image = params.osImage
