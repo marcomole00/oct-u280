@@ -1,4 +1,23 @@
 #!/usr/bin/env bash
+fix_dependecy_for_config_fpga() {
+    wget http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.23_amd64.deb
+    apt-get install -y ./libssl1.1_1.1.1f-1ubuntu2.23_amd64.deb
+}
+
+install_dpdk() {
+    cp /proj/octfpga-PG0/tools/dpdk.sh /opt/.
+    cd /opt/
+    ./dpdk.sh
+}
+
+bpf_dependencies() {
+    apt-get install -y libbpf-dev clang llvm libc6-dev-i386
+}
+
+clone_repos() {
+    git clone https://github.com/marcomole00/open-nic-driver.git /users/markmole/open-nic-driver
+    git clone --recurse-submodules https://github.com/marcomole00/ebpf-xdp-test-suite  /users/markmole/ebpf-xdp-test-suite
+}
 
 install_xrt() {
     echo "Install XRT"
@@ -219,3 +238,20 @@ else
     echo "Custom flow selected."
     install_xbflash
 fi    
+# Disable PCIe fatal error reporting
+disable_pcie_fatal_error 
+
+
+if [[ "$OSVERSION" == "ubuntu-22.04" ]]; then
+    fix_dependecy_for_config_fpga
+    # cp /proj/octfpga-PG0/tools/xbflash/ubuntu-20.04/xrt_202210.2.13.466_20.04-amd64-xbflash2.deb ~
+    bpf_dependencies
+    clone_repos
+fi
+
+if [[ "$OSVERSION" == "ubuntu-20.04" ]]; then
+   install_dpdk
+fi
+
+sudo apt install -y tmux
+

@@ -1,4 +1,5 @@
 """OCT Alveo U280 profile with post-boot script
+If a node with a 100G NIC is selected that interface is added to the topology
 """
 
 # Import the Portal object.
@@ -48,6 +49,13 @@ pc.defineParameter("osImage", "Select Image",
                    imageList[0], imageList,
                    longDescription="Supported operating systems are Ubuntu and CentOS.")  
 
+# Optionally start X11 VNC server.
+pc.defineParameter("startVNC",  "Start X11 VNC on your nodes",
+                   portal.ParameterType.BOOLEAN, False,
+                   longDescription="Start X11 VNC server on your nodes. There will be " +
+                   "a menu option in the node context menu to start a browser based VNC " +
+                   "client. Works really well, give it a try!")
+
 # Optional ephemeral blockstore
 pc.defineParameter("tempFileSystemSize", "Temporary Filesystem Size",
                    portal.ParameterType.INTEGER, 0,advanced=True,
@@ -68,6 +76,7 @@ pc.defineParameter("tempFileSystemMount", "Temporary Filesystem Mount Point",
                    longDescription="Mount the temporary file system at this mount point; in general you " +
                    "you do not need to change this, but we provide the option just in case your software " +
                    "is finicky.")  
+
                    
 # Retrieve the values the user specifies during instantiation.
 params = pc.bindParameters()        
@@ -86,7 +95,11 @@ for nodeName in nodeList:
     host.component_manager_id = "urn:publicid:IDN+cloudlab.umass.edu+authority+cm"
     # Assign to the node hosting the FPGA.
     host.component_id = nodeName
-    host.disk_image = params.osImage
+    
+    if params.osImage == 'urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU22-64-STD' and i == 0:
+        host.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
+    else:
+        host.disk_image = params.osImage
     
     # Optional Blockstore
     if params.tempFileSystemSize > 0 or params.tempFileSystemMax:
@@ -115,6 +128,11 @@ for nodeName in nodeList:
     host_iface1 = host.addInterface()
     host_iface1.component_id = "eth2"
     host_iface1.addAddress(pg.IPv4Address("192.168.40." + str(i+30), "255.255.255.0")) 
+    # these are the nodes with an additional 100G interface
+    if nodeName in ['pc160', 'pc161', 'pc162', 'pc163']:
+        host_iface2 = host.addInterface()
+        host_iface2.component_id = "eth3"
+        host_iface2.addAddress(pg.IPv4Address("192.168.40." + str(i+40), "255.255.255.0"))
     fpga_iface1 = fpga.addInterface()
     fpga_iface1.component_id = "eth0"
     fpga_iface1.addAddress(pg.IPv4Address("192.168.40." + str(i+10), "255.255.255.0"))
@@ -125,8 +143,13 @@ for nodeName in nodeList:
     lan.addInterface(fpga_iface1)
     lan.addInterface(fpga_iface2)
     lan.addInterface(host_iface1)
-  
+    if nodeName in ['pc160', 'pc161', 'pc162', 'pc163']:
+        lan.addInterface(host_iface2)
+
+    if params.startVNC:
+        host.startVNC()
     i+=1
 
 # Print Request RSpec
 pc.printRequestRSpec(request)
+ # type: ignore
