@@ -4,6 +4,11 @@ fix_dependecy_for_config_fpga() {
     apt-get install -y ./libssl1.1_1.1.1f-1ubuntu2.23_amd64.deb
 }
 
+install_dpdk() {
+    cp /proj/octfpga-PG0/tools/dpdk.sh /opt/.
+    cd /opt/
+    ./dpdk.sh
+}
 
 bpf_dependencies() {
     apt-get install -y libbpf-dev clang llvm libc6-dev-i386
@@ -235,6 +240,10 @@ if [[ "$OSVERSION" == "ubuntu-22.04" ]]; then
     # cp /proj/octfpga-PG0/tools/xbflash/ubuntu-20.04/xrt_202210.2.13.466_20.04-amd64-xbflash2.deb ~
     bpf_dependencies
     clone_repos
+fi
+
+if [[ "$OSVERSION" == "ubuntu-20.04" ]]; then
+   install_dpdk
 fi
 
 sudo apt install -y tmux
