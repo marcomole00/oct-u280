@@ -8,6 +8,13 @@ install_dpdk() {
     cp /proj/octfpga-PG0/tools/dpdk.sh /opt/.
     cd /opt/
     ./dpdk.sh
+
+}
+
+set_grub_for_dpdk() {
+    grub='GRUB_CMDLINE_LINUX_DEFAULT="default_hugepagesz=1G hugepagesz=1G hugepages=8 intel_iommu=on"'
+	echo $grub | sudo tee -a /etc/default/grub
+	sudo update-grub
 }
 
 bpf_dependencies() {
@@ -32,29 +39,6 @@ install_xrt() {
     sudo bash -c "echo 'source $VITIS_BASE_PATH/$VITISVERSION/settings64.sh' >> /etc/profile"
 }
 
-install_shellpkg() {
-
-if [[ "$U280" == 0 ]]; then
-    echo "[WARNING] No FPGA Board Detected."
-    exit 1;
-fi
-     
-for PF in U280; do
-    if [[ "$(($PF))" != 0 ]]; then
-        echo "You have $(($PF)) $PF card(s). "
-        PLATFORM=`echo "alveo-$PF" | awk '{print tolower($0)}'`
-        install_u280_shell
-    fi
-done
-}
-
-check_shellpkg() {
-    if [[ "$OSVERSION" == "ubuntu-20.04" ]] || [[ "$OSVERSION" == "ubuntu-22.04" ]]; then
-        PACKAGE_INSTALL_INFO=`apt list --installed 2>/dev/null | grep "$PACKAGE_NAME" | grep "$PACKAGE_VERSION"`
-    elif [[ "$OSVERSION" == "centos-8" ]]; then
-        PACKAGE_INSTALL_INFO=`yum list installed 2>/dev/null | grep "$PACKAGE_NAME" | grep "$PACKAGE_VERSION"`
-    fi
-}
 
 check_xrt() {
     if [[ "$OSVERSION" == "ubuntu-20.04" ]] || [[ "$OSVERSION" == "ubuntu-22.04" ]]; then
@@ -74,42 +58,6 @@ install_xbflash() {
     fi    
 }
 
-check_requested_shell() {
-    SHELL_INSTALL_INFO=`/opt/xilinx/xrt/bin/xbmgmt examine | grep "$DSA"`
-}
-
-check_factory_shell() {
-    SHELL_INSTALL_INFO=`/opt/xilinx/xrt/bin/xbmgmt examine | grep "$FACTORY_SHELL"`
-}
-
-install_u280_shell() {
-    check_shellpkg
-    if [[ $? != 0 ]]; then
-        # echo "Download Shell package"
-        # wget -cO - "https://www.xilinx.com/bin/public/openDownload?filename=$SHELL_PACKAGE" > /tmp/$SHELL_PACKAGE
-        if [[ $SHELL_PACKAGE == *.tar.gz ]]; then
-            echo "Untar the package. "
-            tar xzvf $SHELL_BASE_PATH/$TOOLVERSION/$OSVERSION/$SHELL_PACKAGE -C /tmp/
-            rm /tmp/$SHELL_PACKAGE
-        fi
-        echo "Install Shell"
-        if [[ "$OSVERSION" == "ubuntu-20.04" ]] || [[ "$OSVERSION" == "ubuntu-22.04" ]]; then
-            echo "Install Ubuntu shell package"
-            apt-get install -y /tmp/xilinx*
-        elif [[ "$OSVERSION" == "centos-8" ]]; then
-            echo "Install CentOS shell package"
-            yum install -y /tmp/xilinx*
-        fi
-        rm /tmp/xilinx*
-    else
-        echo "The package is already installed. "
-    fi
-}
-
-flash_card() {
-    echo "Flash Card(s). "
-    /opt/xilinx/xrt/bin/xbmgmt program --base --device $PCI_ADDR
-}
 
 detect_cards() {
     lspci > /dev/null
@@ -134,11 +82,6 @@ detect_cards() {
 install_config_fpga() {
     echo "Installing config-fpga."
     cp $CONFIG_FPGA_PATH/* /usr/local/bin
-}
-
-install_libs() {
-    echo "Installing libs."
-    sudo $VITIS_BASE_PATH/$VITISVERSION/scripts/installLibs.sh
 }
 
 disable_pcie_fatal_error() {
@@ -202,56 +145,20 @@ else
     fi
 fi
 
-install_libs
-# Disable PCIe fatal error reporting
-disable_pcie_fatal_error 
-
-install_config_fpga
-
-if [ "$WORKFLOW" = "Vitis" ] ; then
-    check_shellpkg
-    if [ $? == 0 ]; then
-        echo "Shell is already installed."
-        if check_requested_shell ; then
-            echo "FPGA shell verified."
-        else
-            echo "Error: FPGA shell couldn't be verified."
-            exit 1
-        fi
-    else
-        echo "Shell is not installed. Installing shell..."
-        install_shellpkg
-        check_shellpkg
-        if [ $? == 0 ]; then
-            echo "Shell was successfully installed. Flashing..."
-            flash_card
-            /usr/local/bin/post-boot-fpga
-            #echo "Cold rebooting..."
-            #sudo -u geniuser perl /local/repository/cold-reboot.pl
-        else
-            echo "Error: Shell installation failed."
-            exit 1
-        fi
-    fi
-    
-else
-    echo "Custom flow selected."
-    install_xbflash
-fi    
-# Disable PCIe fatal error reporting
-disable_pcie_fatal_error 
-
 
 if [[ "$OSVERSION" == "ubuntu-22.04" ]]; then
     fix_dependecy_for_config_fpga
-    # cp /proj/octfpga-PG0/tools/xbflash/ubuntu-20.04/xrt_202210.2.13.466_20.04-amd64-xbflash2.deb ~
     bpf_dependencies
     clone_repos
 fi
 
 if [[ "$OSVERSION" == "ubuntu-20.04" ]]; then
    install_dpdk
+   cp -r /proj/octfpga-PG0/tools/deployment/opennic/ /users/markmole/
+   set_grub_for_dpdk
 fi
 
-sudo apt install -y tmux
-
+# Disable PCIe fatal error reporting
+disable_pcie_fatal_error 
+install_config_fpga
+install_xbflash

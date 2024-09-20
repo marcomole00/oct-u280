@@ -1,5 +1,6 @@
 """OCT Alveo U280 profile with post-boot script
-If a node with a 100G NIC is selected that interface is added to the topology
+If a node with a 100G NIC is selected that interface is added to the topology.
+The first node will have Ubuntu 20.04, regardless of the selected image, with a dpdk installation.
 """
 
 # Import the Portal object.
@@ -27,7 +28,7 @@ request = pc.makeRequestRSpec()
 imageList = [('urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU20-64-STD', 'UBUNTU 20.04'),
              ('urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU22-64-STD', 'UBUNTU 22.04')] 
 
-workflow = [('Vitis'), ('Vivado')]
+workflow = [('Vivado')]
 
 toolVersion = [('2023.1')] 
 
@@ -48,13 +49,6 @@ pc.defineParameter("osImage", "Select Image",
                    portal.ParameterType.IMAGE,
                    imageList[0], imageList,
                    longDescription="Supported operating systems are Ubuntu and CentOS.")  
-
-# Optionally start X11 VNC server.
-pc.defineParameter("startVNC",  "Start X11 VNC on your nodes",
-                   portal.ParameterType.BOOLEAN, False,
-                   longDescription="Start X11 VNC server on your nodes. There will be " +
-                   "a menu option in the node context menu to start a browser based VNC " +
-                   "client. Works really well, give it a try!")
 
 # Optional ephemeral blockstore
 pc.defineParameter("tempFileSystemSize", "Temporary Filesystem Size",
@@ -97,7 +91,7 @@ for nodeName in nodeList:
     host.component_id = nodeName
     
     if params.osImage == 'urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU22-64-STD' and i == 0:
-        host.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
+        host.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU20-64-STD'
     else:
         host.disk_image = params.osImage
     
@@ -146,8 +140,6 @@ for nodeName in nodeList:
     if nodeName in ['pc160', 'pc161', 'pc162', 'pc163']:
         lan.addInterface(host_iface2)
 
-    if params.startVNC:
-        host.startVNC()
     i+=1
 
 # Print Request RSpec
