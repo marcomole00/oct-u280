@@ -11,6 +11,12 @@ install_dpdk() {
 
 }
 
+install_cpufreq() {
+    apt-get install -y cpufrequtils
+    cpufreq-set -g performance
+}
+
+
 set_grub_for_dpdk() {
     grub='GRUB_CMDLINE_LINUX_DEFAULT="default_hugepagesz=1G hugepagesz=1G hugepages=8 intel_iommu=on"'
 	echo $grub | sudo tee -a /etc/default/grub
@@ -162,3 +168,4 @@ fi
 disable_pcie_fatal_error 
 install_config_fpga
 install_xbflash
+install_cpufreq
