@@ -16,6 +16,10 @@ install_cpufreq() {
     cpufreq-set -g performance
 }
 
+install_perf(){
+    apt-get install linux-tools-common linux-tools-generic linux-tools-`uname -r`
+    git clone https://github.com/brendangregg/FlameGraph /users/markmole/flamegraph
+}
 
 set_grub_for_dpdk() {
     grub='GRUB_CMDLINE_LINUX_DEFAULT="default_hugepagesz=1G hugepagesz=1G hugepages=8 intel_iommu=on"'
@@ -156,6 +160,7 @@ if [[ "$OSVERSION" == "ubuntu-22.04" ]]; then
     fix_dependecy_for_config_fpga
     bpf_dependencies
     clone_repos
+    install_perf
 fi
 
 if [[ "$OSVERSION" == "ubuntu-20.04" ]]; then
