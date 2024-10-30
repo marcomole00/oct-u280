@@ -17,7 +17,7 @@ install_cpufreq() {
 }
 
 install_perf(){
-    apt-get install linux-tools-common linux-tools-generic linux-tools-`uname -r`
+    apt-get install -y  linux-tools-common linux-tools-generic linux-tools-`uname -r`
     git clone https://github.com/brendangregg/FlameGraph /users/markmole/flamegraph
 }
 
