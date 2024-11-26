@@ -28,7 +28,7 @@ set_grub_for_dpdk() {
 }
 
 bpf_dependencies() {
-    apt-get install -y libbpf-dev clang llvm libc6-dev-i386
+    apt-get install -y libbpf-dev clang llvm libc6-dev-i386 libelf-dev libpcap-dev pkg-config m4
 }
 
 clone_repos() {
