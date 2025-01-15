@@ -167,8 +167,8 @@ if [[ "$OSVERSION" == "ubuntu-22.04" ]]; then
     clone_repos
     install_perf
 fi
-
-if [ "$3" == "dpdk"]; then
+echo "the options provided are : $*"
+if [ "$3" == "dpdk" ]; then
     echo "Installing dpdk on this machine"
     install_dpdk
     cp -r /proj/octfpga-PG0/tools/deployment/opennic/ /users/markmole/
