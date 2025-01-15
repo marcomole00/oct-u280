@@ -7,9 +7,14 @@ fix_dependecy_for_config_fpga() {
 install_dpdk() {
     cp /proj/octfpga-PG0/tools/dpdk.sh /opt/.
     cd /opt/
+    apt-get install -y liblua5.4-dev
     ./dpdk.sh
-
-}
+    cd /opt/dpdk/pktgen-dpdk-pktgen-23.03.0
+    sudo make clean
+    export  RTE_SDK=../dpdk-$DPDK_VERSION
+    export  RTE_TARGET=build
+    sudo make buildlua
+    }
 
 install_cpufreq() {
     apt-get install -y cpufrequtils
@@ -163,10 +168,11 @@ if [[ "$OSVERSION" == "ubuntu-22.04" ]]; then
     install_perf
 fi
 
-if [[ "$OSVERSION" == "ubuntu-20.04" ]]; then
-   install_dpdk
-   cp -r /proj/octfpga-PG0/tools/deployment/opennic/ /users/markmole/
-   set_grub_for_dpdk
+if [ "$3" == "dpdk"]; then
+    echo "Installing dpdk on this machine"
+    install_dpdk
+    cp -r /proj/octfpga-PG0/tools/deployment/opennic/ /users/markmole/
+    set_grub_for_dpdk
 fi
 
 # Disable PCIe fatal error reporting

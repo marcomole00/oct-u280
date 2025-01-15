@@ -90,10 +90,10 @@ for nodeName in nodeList:
     # Assign to the node hosting the FPGA.
     host.component_id = nodeName
     
-    if params.osImage == 'urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU22-64-STD' and i == 0:
-        host.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU20-64-STD'
-    else:
-        host.disk_image = params.osImage
+    # if params.osImage == 'urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU22-64-STD' and i == 0:
+        # host.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU20-64-STD'
+    # else:
+    host.disk_image = params.osImage
     
     # Optional Blockstore
     if params.tempFileSystemSize > 0 or params.tempFileSystemMax:
@@ -105,7 +105,10 @@ for nodeName in nodeList:
         bs.placement = "any"
 
     if params.toolVersion != "Do not install tools":
-        host.addService(pg.Execute(shell="bash", command="sudo /local/repository/post-boot.sh " + params.workflow + " " + params.toolVersion + " >> /local/logs/output_log.txt"))
+        if i == 0:
+            host.addService(pg.Execute(shell="bash", command="sudo /local/repository/post-boot.sh " + params.workflow + " " + params.toolVersion + " dpdk "+ " >> /local/logs/output_log.txt"))
+        else:
+            host.addService(pg.Execute(shell="bash", command="sudo /local/repository/post-boot.sh " + params.workflow + " " + params.toolVersion + " >> /local/logs/output_log.txt"))
 
     # Since we want to create network links to the FPGA, it has its own identity.
     fpga = request.RawPC("fpga-" + nodeName)
