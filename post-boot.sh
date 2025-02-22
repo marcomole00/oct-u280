@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 fix_dependecy_for_config_fpga() {
-    wget http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.23_amd64.deb
-    apt-get install -y ./libssl1.1_1.1.1f-1ubuntu2.23_amd64.deb
+    # wget http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.23_amd64.deb
+    wget https://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+    apt-get install -y libssl1.1_1.1.1f-1ubuntu2_amd64.deb
 }
 
 install_dpdk() {
