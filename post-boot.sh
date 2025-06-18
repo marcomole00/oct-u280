@@ -2,7 +2,7 @@
 fix_dependecy_for_config_fpga() {
     # wget http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.23_amd64.deb
     wget https://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
-    apt-get install -y libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+    apt-get install -y ./libssl1.1_1.1.1f-1ubuntu2_amd64.deb
 }
 
 install_dpdk() {
@@ -28,7 +28,7 @@ install_perf(){
 }
 
 set_grub_for_dpdk() {
-    grub='GRUB_CMDLINE_LINUX_DEFAULT="default_hugepagesz=1G hugepagesz=1G hugepages=8 intel_iommu=on"'
+    grub='GRUB_CMDLINE_LINUX_DEFAULT="default_hugepagesz=1G hugepagesz=1G hugepages=16 intel_iommu=on"'
 	echo $grub | sudo tee -a /etc/default/grub
 	sudo update-grub
 }
